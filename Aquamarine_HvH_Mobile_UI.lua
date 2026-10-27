@@ -1,64 +1,3 @@
---[[
-================================================================================
-AQUAMARINE // HVH UI CONCEPT
-Версия: 1.0.0-mobile-prototype
-Формат: Roblox Lua / LocalScript
-
-ВАЖНО
------
-Это визуальный макет интерфейса для Roblox Studio. Переключатели, выпадающие
-списки, слайдеры и кнопки изменяют только локальное состояние самого меню.
-Скрипт НЕ содержит аимбота, ESP, телепортации, обходов, изменения скорости,
-работы с RemoteEvent, чтения чужих данных или управления игровыми механиками.
-Названия спорных игровых функций приведены исключительно как декоративные
-элементы концепта. Они не выполняют заявленные игровые действия.
-
-УСТАНОВКА
----------
-1. Открой собственный проект в Roblox Studio.
-2. Создай LocalScript внутри StarterPlayer > StarterPlayerScripts.
-3. Вставь весь этот файл в LocalScript и запусти Play.
-4. Для закрытия нажми X; маленькая кнопка A оставит возможность открыть UI снова.
-5. Перемещай окно за верхнюю панель. На телефонах поддерживается Touch.
-
-ПРИМЕЧАНИЯ ПО МОБИЛЬНОЙ ВЁРСТКЕ
--------------------------------
-- Размер окна пересчитывается по размеру ViewportSize.
-- Категории размещены в горизонтально прокручиваемой полосе.
-- Карточки настроек идут вертикально, чтобы их было удобно нажимать пальцем.
-- Кнопки имеют увеличенную зону нажатия, а панель можно перетаскивать касанием.
-- Поиск фильтрует элементы активной вкладки.
-- Все состояния хранятся только в памяти текущего LocalScript.
-
-СТРУКТУРА
----------
-1. Сервисы и палитра
-2. Вспомогательные функции создания элементов
-3. Каталог декоративных настроек
-4. Построение окна и панели категорий
-5. Создание карточек и контролов
-6. Поиск, уведомления и переключение страниц
-7. Обработка сенсорного ввода и изменение размеров окна
-8. Инициализация и запуск
-
-КОД НАПИСАН ДЛЯ ОБЫЧНОГО ROBLOX LOCAL SCRIPT И НЕ ИСПОЛЬЗУЕТ API ЭКЗЕКУТОРА.
-
-Поддерживаемые интеракции интерфейса:
-- Toggle: меняет булево значение и внешний вид переключателя.
-- Slider: меняет локальное число прикосновением/мышью или кнопками +/-.
-- Dropdown: циклически переключает пункты локального списка.
-- Action: показывает toast с описанием демонстрационного действия.
-- Search: фильтрует карточки по названию и описанию.
-- Tabs: переключают визуальные разделы каталога.
-- Minimize: прячет содержимое, сохраняя заголовок.
-- Close: скрывает окно; плавающая кнопка открывает его снова.
-
-Все игровые опции в каталоге являются фиктивными. Не подключай эти элементы к
-игровому коду, если задача состоит только в создании визуального прототипа.
-================================================================================
-]]
-
---// Services ------------------------------------------------------------------
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -68,7 +7,6 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Camera = workspace.CurrentCamera
 
---// Constants -----------------------------------------------------------------
 local APP_NAME = "AQUAMARINE"
 local APP_SUBTITLE = "HVH UI CONCEPT"
 local APP_VERSION = "1.0.0"
@@ -141,7 +79,6 @@ local toastHost
 local renderActiveTab
 local updateResponsiveSize
 
---// Utility functions ----------------------------------------------------------
 local function clamp(value, minValue, maxValue)
     return math.max(minValue, math.min(maxValue, value))
 end
@@ -371,7 +308,6 @@ local function showToast(message, tone)
     end)
 end
 
---// User-facing state disclaimer ---------------------------------------------
 local function isUiOnly()
     return true
 end
@@ -381,9 +317,8 @@ local function notifyUiOnly(actionName)
     showToast(action .. ": только UI-макет", "warning")
 end
 
---// Catalog data is declared below. No entry executes gameplay code. ----------
 local CATALOG = {
-    -- Combat: decorative controls only
+
     {
         id = "combat",
         title = "COMBAT",
@@ -720,9 +655,207 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "combat_extra_01_aim_ring_preview",
+                title = "Aim Ring Preview",
+                description = "Настройка кольца прицела только в макете.",
+                kind = "toggle",
+                default = false,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_02_aim_ring_radius",
+                title = "Aim Ring Radius",
+                description = "Размер декоративного кольца в условных единицах.",
+                kind = "slider",
+                default = 68,
+                group = "Combat",
+                options = {},
+                min = 10,
+                max = 180,
+            },
+            {
+                id = "combat_extra_03_target_card_style",
+                title = "Target Card Style",
+                description = "Вариант оформления демонстрационной карточки цели.",
+                kind = "dropdown",
+                default = "Minimal",
+                group = "Combat",
+                options = { "Minimal", "Outlined", "Filled" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_04_target_card_opacity",
+                title = "Target Card Opacity",
+                description = "Прозрачность визуального примера карточки.",
+                kind = "slider",
+                default = 80,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_05_shot_marker_preview",
+                title = "Shot Marker Preview",
+                description = "Показывает только состояние выбранного маркера.",
+                kind = "toggle",
+                default = false,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_06_shot_marker_style",
+                title = "Shot Marker Style",
+                description = "Стиль условного маркера без регистрации попаданий.",
+                kind = "dropdown",
+                default = "Circle",
+                group = "Combat",
+                options = { "Circle", "Cross", "Diamond" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_07_damage_label_size",
+                title = "Damage Label Size",
+                description = "Размер макетной подписи урона.",
+                kind = "slider",
+                default = 14,
+                group = "Combat",
+                options = {},
+                min = 8,
+                max = 28,
+            },
+            {
+                id = "combat_extra_08_hit_indicator_theme",
+                title = "Hit Indicator Theme",
+                description = "Цветовая схема демонстрационного индикатора.",
+                kind = "dropdown",
+                default = "Aquamarine",
+                group = "Combat",
+                options = { "Aquamarine", "Midnight", "Graphite" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_09_reticle_preview",
+                title = "Reticle Preview",
+                description = "Включает локальный визуальный образец прицела.",
+                kind = "toggle",
+                default = true,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_10_reticle_gap",
+                title = "Reticle Gap",
+                description = "Расстояние между элементами демонстрационного прицела.",
+                kind = "slider",
+                default = 5,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 20,
+            },
+            {
+                id = "combat_extra_11_reticle_thickness",
+                title = "Reticle Thickness",
+                description = "Толщина штрихов в выбранном макете.",
+                kind = "slider",
+                default = 2,
+                group = "Combat",
+                options = {},
+                min = 1,
+                max = 8,
+            },
+            {
+                id = "combat_extra_12_combat_panel_density",
+                title = "Combat Panel Density",
+                description = "Плотность отображения параметров в разделе.",
+                kind = "dropdown",
+                default = "Comfortable",
+                group = "Combat",
+                options = { "Compact", "Comfortable", "Spacious" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_13_status_accent_preview",
+                title = "Status Accent Preview",
+                description = "Переключатель акцентной метки состояния.",
+                kind = "toggle",
+                default = true,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_14_combat_layout_sample",
+                title = "Combat Layout Sample",
+                description = "Демонстрационное действие с уведомлением интерфейса.",
+                kind = "action",
+                default = false,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_15_target_panel_header",
+                title = "Target Panel Header",
+                description = "Оформление заголовка локальной карточки цели.",
+                kind = "dropdown",
+                default = "Compact",
+                group = "Combat",
+                options = { "Compact", "Standard", "Detailed" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_16_aim_ring_smoothness",
+                title = "Aim Ring Smoothness",
+                description = "Значение плавности для визуального образца кольца.",
+                kind = "slider",
+                default = 55,
+                group = "Combat",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "combat_extra_17_hit_marker_lifetime",
+                title = "Hit Marker Lifetime",
+                description = "Длительность подписи в демонстрационном макете.",
+                kind = "slider",
+                default = 1.2,
+                group = "Combat",
+                options = {},
+                min = 0.2,
+                max = 3.0,
+            },
+            {
+                id = "combat_extra_18_reticle_gap_style",
+                title = "Reticle Gap Style",
+                description = "Вариант оформления интервала между штрихами.",
+                kind = "dropdown",
+                default = "Balanced",
+                group = "Combat",
+                options = { "Tight", "Balanced", "Wide" },
+                min = 0,
+                max = 100,
+            },
         },
     },
-    -- Anti-Aim: decorative controls only
+
     {
         id = "antiaim",
         title = "ANTI-AIM",
@@ -971,9 +1104,207 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "antiaim_extra_01_angle_profile_preview",
+                title = "Angle Profile Preview",
+                description = "Меняет только сохранённый выбор профиля в UI.",
+                kind = "dropdown",
+                default = "Balanced",
+                group = "Anti-Aim",
+                options = { "Balanced", "Dynamic", "Subtle" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_02_yaw_indicator",
+                title = "Yaw Indicator",
+                description = "Включает декоративную метку направления.",
+                kind = "toggle",
+                default = true,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_03_yaw_indicator_size",
+                title = "Yaw Indicator Size",
+                description = "Размер визуальной метки направления.",
+                kind = "slider",
+                default = 46,
+                group = "Anti-Aim",
+                options = {},
+                min = 12,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_04_desync_graph_preview",
+                title = "Desync Graph Preview",
+                description = "Состояние макета графика без сетевой логики.",
+                kind = "toggle",
+                default = false,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_05_desync_graph_scale",
+                title = "Desync Graph Scale",
+                description = "Масштаб демонстрационного графика.",
+                kind = "slider",
+                default = 60,
+                group = "Anti-Aim",
+                options = {},
+                min = 10,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_06_condition_badge_style",
+                title = "Condition Badge Style",
+                description = "Стиль локальной метки состояния.",
+                kind = "dropdown",
+                default = "Pill",
+                group = "Anti-Aim",
+                options = { "Pill", "Square", "Minimal" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_07_standing_state_sample",
+                title = "Standing State Sample",
+                description = "Переключатель образца состояния стоя.",
+                kind = "toggle",
+                default = false,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_08_moving_state_sample",
+                title = "Moving State Sample",
+                description = "Переключатель образца состояния движения.",
+                kind = "toggle",
+                default = false,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_09_airborne_state_sample",
+                title = "Airborne State Sample",
+                description = "Переключатель образца состояния в воздухе.",
+                kind = "toggle",
+                default = false,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_10_jitter_label_preview",
+                title = "Jitter Label Preview",
+                description = "Показывает только пример подписи jitter.",
+                kind = "toggle",
+                default = false,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_11_pattern_card",
+                title = "Pattern Card",
+                description = "Стиль карточки выбранного макетного паттерна.",
+                kind = "dropdown",
+                default = "Soft",
+                group = "Anti-Aim",
+                options = { "Soft", "Sharp", "Glass" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_12_state_refresh_preview",
+                title = "State Refresh Preview",
+                description = "Демо-действие обновления визуального статуса.",
+                kind = "action",
+                default = false,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_13_antiaim_panel_spacing",
+                title = "Antiaim Panel Spacing",
+                description = "Расстояние между элементами панели.",
+                kind = "slider",
+                default = 12,
+                group = "Anti-Aim",
+                options = {},
+                min = 4,
+                max = 24,
+            },
+            {
+                id = "antiaim_extra_14_antiaim_profile_label",
+                title = "Antiaim Profile Label",
+                description = "Включает небольшую подпись профиля.",
+                kind = "toggle",
+                default = true,
+                group = "Anti-Aim",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_15_condition_label_position",
+                title = "Condition Label Position",
+                description = "Положение метки состояния в карточке.",
+                kind = "dropdown",
+                default = "Right",
+                group = "Anti-Aim",
+                options = { "Left", "Right", "Top" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_16_pattern_preview_density",
+                title = "Pattern Preview Density",
+                description = "Плотность элементов в графическом образце.",
+                kind = "dropdown",
+                default = "Normal",
+                group = "Anti-Aim",
+                options = { "Low", "Normal", "High" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_17_angle_badge_opacity",
+                title = "Angle Badge Opacity",
+                description = "Прозрачность декоративного индикатора угла.",
+                kind = "slider",
+                default = 85,
+                group = "Anti-Aim",
+                options = {},
+                min = 10,
+                max = 100,
+            },
+            {
+                id = "antiaim_extra_18_state_card_theme",
+                title = "State Card Theme",
+                description = "Цветовая схема карточек состояния.",
+                kind = "dropdown",
+                default = "Ocean",
+                group = "Anti-Aim",
+                options = { "Ocean", "Night", "Monochrome" },
+                min = 0,
+                max = 100,
+            },
         },
     },
-    -- Visuals: decorative controls only
+
     {
         id = "visuals",
         title = "VISUALS",
@@ -1332,9 +1663,207 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "visuals_extra_01_overlay_master_preview",
+                title = "Overlay Master Preview",
+                description = "Общее состояние декоративного overlay-примера.",
+                kind = "toggle",
+                default = true,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_02_overlay_border_width",
+                title = "Overlay Border Width",
+                description = "Толщина границ у визуального образца.",
+                kind = "slider",
+                default = 1,
+                group = "Visuals",
+                options = {},
+                min = 1,
+                max = 5,
+            },
+            {
+                id = "visuals_extra_03_overlay_corner_style",
+                title = "Overlay Corner Style",
+                description = "Стиль углов демонстрационной рамки.",
+                kind = "dropdown",
+                default = "Rounded",
+                group = "Visuals",
+                options = { "Rounded", "Sharp", "Cut" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_04_name_label_background",
+                title = "Name Label Background",
+                description = "Показывает фон под макетными подписями.",
+                kind = "toggle",
+                default = true,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_05_name_label_scale",
+                title = "Name Label Scale",
+                description = "Масштаб текста в демонстрационной подписи.",
+                kind = "slider",
+                default = 100,
+                group = "Visuals",
+                options = {},
+                min = 70,
+                max = 140,
+            },
+            {
+                id = "visuals_extra_06_health_bar_theme",
+                title = "Health Bar Theme",
+                description = "Палитра локального примера индикатора здоровья.",
+                kind = "dropdown",
+                default = "Gradient",
+                group = "Visuals",
+                options = { "Gradient", "Solid", "Muted" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_07_health_bar_height",
+                title = "Health Bar Height",
+                description = "Высота образца шкалы здоровья.",
+                kind = "slider",
+                default = 5,
+                group = "Visuals",
+                options = {},
+                min = 2,
+                max = 12,
+            },
+            {
+                id = "visuals_extra_08_distance_label_format",
+                title = "Distance Label Format",
+                description = "Формат декоративной подписи дистанции.",
+                kind = "dropdown",
+                default = "Meters",
+                group = "Visuals",
+                options = { "Meters", "Studs", "Compact" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_09_skeleton_line_style",
+                title = "Skeleton Line Style",
+                description = "Вариант линий в демонстрационном превью.",
+                kind = "dropdown",
+                default = "Thin",
+                group = "Visuals",
+                options = { "Thin", "Bold", "Dotted" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_10_glow_intensity_preview",
+                title = "Glow Intensity Preview",
+                description = "Числовой параметр для визуального макета свечения.",
+                kind = "slider",
+                default = 35,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_11_visuals_accent_toggle",
+                title = "Visuals Accent Toggle",
+                description = "Включает акцентную отметку у элементов UI.",
+                kind = "toggle",
+                default = true,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_12_crosshair_outline",
+                title = "Crosshair Outline",
+                description = "Переключатель контура макетного прицела.",
+                kind = "toggle",
+                default = false,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_13_crosshair_opacity",
+                title = "Crosshair Opacity",
+                description = "Прозрачность демонстрационного прицела.",
+                kind = "slider",
+                default = 90,
+                group = "Visuals",
+                options = {},
+                min = 10,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_14_visual_preset_sample",
+                title = "Visual Preset Sample",
+                description = "Показывает уведомление о выбранном образце.",
+                kind = "action",
+                default = false,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_15_overlay_fill_opacity",
+                title = "Overlay Fill Opacity",
+                description = "Прозрачность заливки визуальной карточки.",
+                kind = "slider",
+                default = 20,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_16_distance_label_placement",
+                title = "Distance Label Placement",
+                description = "Позиция подписи расстояния в макете.",
+                kind = "dropdown",
+                default = "Bottom",
+                group = "Visuals",
+                options = { "Top", "Bottom", "Side" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_17_name_tag_background_style",
+                title = "Name Tag Background Style",
+                description = "Стиль фона для демонстрационных имён.",
+                kind = "dropdown",
+                default = "Soft",
+                group = "Visuals",
+                options = { "Soft", "Solid", "Outline" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "visuals_extra_18_indicator_padding",
+                title = "Indicator Padding",
+                description = "Внутренние отступы визуальных индикаторов.",
+                kind = "slider",
+                default = 6,
+                group = "Visuals",
+                options = {},
+                min = 0,
+                max = 18,
+            },
         },
     },
-    -- Movement: decorative controls only
+
     {
         id = "movement",
         title = "MOVEMENT",
@@ -1561,9 +2090,207 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "movement_extra_01_speedometer_preview",
+                title = "Speedometer Preview",
+                description = "Показывает настройку локального спидометра.",
+                kind = "toggle",
+                default = true,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_02_speedometer_position",
+                title = "Speedometer Position",
+                description = "Расположение демонстрационного индикатора.",
+                kind = "dropdown",
+                default = "Bottom Left",
+                group = "Movement",
+                options = { "Top Left", "Top Right", "Bottom Left", "Bottom Right" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_03_speedometer_scale",
+                title = "Speedometer Scale",
+                description = "Масштаб UI-образца скорости.",
+                kind = "slider",
+                default = 100,
+                group = "Movement",
+                options = {},
+                min = 60,
+                max = 150,
+            },
+            {
+                id = "movement_extra_04_input_meter_preview",
+                title = "Input Meter Preview",
+                description = "Включает декоративный индикатор ввода.",
+                kind = "toggle",
+                default = false,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_05_input_meter_style",
+                title = "Input Meter Style",
+                description = "Выбор оформления индикатора клавиш.",
+                kind = "dropdown",
+                default = "Keycaps",
+                group = "Movement",
+                options = { "Keycaps", "Flat", "Minimal" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_06_movement_graph_preview",
+                title = "Movement Graph Preview",
+                description = "Состояние графического образца без измерения физики.",
+                kind = "toggle",
+                default = false,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_07_graph_history_length",
+                title = "Graph History Length",
+                description = "Количество точек в условном макетном графике.",
+                kind = "slider",
+                default = 30,
+                group = "Movement",
+                options = {},
+                min = 5,
+                max = 120,
+            },
+            {
+                id = "movement_extra_08_jump_state_badge",
+                title = "Jump State Badge",
+                description = "Включает декоративный бейдж прыжка.",
+                kind = "toggle",
+                default = false,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_09_movement_hint_style",
+                title = "Movement Hint Style",
+                description = "Стиль небольших подсказок в UI.",
+                kind = "dropdown",
+                default = "Quiet",
+                group = "Movement",
+                options = { "Quiet", "Standard", "Prominent" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_10_movement_card_radius",
+                title = "Movement Card Radius",
+                description = "Радиус скругления карточек раздела.",
+                kind = "slider",
+                default = 10,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 20,
+            },
+            {
+                id = "movement_extra_11_touch_joystick_sample",
+                title = "Touch Joystick Sample",
+                description = "Предпросмотр неуправляющего джойстика.",
+                kind = "toggle",
+                default = false,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_12_touch_joystick_size",
+                title = "Touch Joystick Size",
+                description = "Размер декоративной зоны джойстика.",
+                kind = "slider",
+                default = 84,
+                group = "Movement",
+                options = {},
+                min = 48,
+                max = 140,
+            },
+            {
+                id = "movement_extra_13_movement_layout_profile",
+                title = "Movement Layout Profile",
+                description = "Вариант плотности макета настроек движения.",
+                kind = "dropdown",
+                default = "Comfortable",
+                group = "Movement",
+                options = { "Compact", "Comfortable", "Spacious" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_14_movement_ui_refresh",
+                title = "Movement UI Refresh",
+                description = "Демо-действие обновления панели.",
+                kind = "action",
+                default = false,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_15_input_meter_opacity",
+                title = "Input Meter Opacity",
+                description = "Прозрачность демонстрационной шкалы ввода.",
+                kind = "slider",
+                default = 82,
+                group = "Movement",
+                options = {},
+                min = 10,
+                max = 100,
+            },
+            {
+                id = "movement_extra_16_speed_label_units",
+                title = "Speed Label Units",
+                description = "Подпись единиц в макетном спидометре.",
+                kind = "dropdown",
+                default = "Studs",
+                group = "Movement",
+                options = { "Studs", "Relative", "None" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_17_indicator_update_sample",
+                title = "Indicator Update Sample",
+                description = "Демо-действие для проверки обновления панели.",
+                kind = "action",
+                default = false,
+                group = "Movement",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "movement_extra_18_movement_panel_position",
+                title = "Movement Panel Position",
+                description = "Расположение вспомогательной панели движения.",
+                kind = "dropdown",
+                default = "Bottom Right",
+                group = "Movement",
+                options = { "Top Left", "Top Right", "Bottom Left", "Bottom Right" },
+                min = 0,
+                max = 100,
+            },
         },
     },
-    -- Player: decorative controls only
+
     {
         id = "player",
         title = "PLAYER",
@@ -1790,9 +2517,207 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "player_extra_01_profile_card_preview",
+                title = "Profile Card Preview",
+                description = "Показывает состояние макетной карточки профиля.",
+                kind = "toggle",
+                default = true,
+                group = "Player",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_02_profile_card_variant",
+                title = "Profile Card Variant",
+                description = "Выбор стиля локальной карточки.",
+                kind = "dropdown",
+                default = "Glass",
+                group = "Player",
+                options = { "Glass", "Flat", "Outlined" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_03_avatar_frame_preview",
+                title = "Avatar Frame Preview",
+                description = "Включает декоративную рамку аватара.",
+                kind = "toggle",
+                default = true,
+                group = "Player",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_04_avatar_frame_shape",
+                title = "Avatar Frame Shape",
+                description = "Форма рамки в макете профиля.",
+                kind = "dropdown",
+                default = "Rounded",
+                group = "Player",
+                options = { "Rounded", "Circle", "Square" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_05_player_tag_scale",
+                title = "Player Tag Scale",
+                description = "Размер демонстрационной метки игрока.",
+                kind = "slider",
+                default = 100,
+                group = "Player",
+                options = {},
+                min = 70,
+                max = 140,
+            },
+            {
+                id = "player_extra_06_session_clock_preview",
+                title = "Session Clock Preview",
+                description = "Переключатель макетных часов сессии.",
+                kind = "toggle",
+                default = false,
+                group = "Player",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_07_session_clock_format",
+                title = "Session Clock Format",
+                description = "Формат отображения времени в образце.",
+                kind = "dropdown",
+                default = "24 Hour",
+                group = "Player",
+                options = { "24 Hour", "12 Hour", "Compact" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_08_local_stats_panel",
+                title = "Local Stats Panel",
+                description = "Показывает состояние демонстрационной панели статистики.",
+                kind = "toggle",
+                default = false,
+                group = "Player",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_09_stats_number_style",
+                title = "Stats Number Style",
+                description = "Оформление чисел в локальном макете.",
+                kind = "dropdown",
+                default = "Tabular",
+                group = "Player",
+                options = { "Tabular", "Rounded", "Compact" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_10_player_card_padding",
+                title = "Player Card Padding",
+                description = "Внутренние отступы карточки профиля.",
+                kind = "slider",
+                default = 12,
+                group = "Player",
+                options = {},
+                min = 4,
+                max = 24,
+            },
+            {
+                id = "player_extra_11_badge_border_preview",
+                title = "Badge Border Preview",
+                description = "Включает контур декоративного бейджа.",
+                kind = "toggle",
+                default = true,
+                group = "Player",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_12_profile_accent_color",
+                title = "Profile Accent Color",
+                description = "Цветовой пресет для образца профиля.",
+                kind = "dropdown",
+                default = "Aquamarine",
+                group = "Player",
+                options = { "Aquamarine", "Midnight", "Graphite" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_13_player_status_sample",
+                title = "Player Status Sample",
+                description = "Демо-действие уведомления о статусе.",
+                kind = "action",
+                default = false,
+                group = "Player",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_14_profile_layout_density",
+                title = "Profile Layout Density",
+                description = "Плотность элементов карточки профиля.",
+                kind = "dropdown",
+                default = "Normal",
+                group = "Player",
+                options = { "Compact", "Normal", "Wide" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_15_profile_accent_preview",
+                title = "Profile Accent Preview",
+                description = "Переключатель акцентной линии карточки профиля.",
+                kind = "toggle",
+                default = true,
+                group = "Player",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_16_status_dot_size",
+                title = "Status Dot Size",
+                description = "Размер декоративной точки состояния.",
+                kind = "slider",
+                default = 6,
+                group = "Player",
+                options = {},
+                min = 3,
+                max = 14,
+            },
+            {
+                id = "player_extra_17_profile_badge_position",
+                title = "Profile Badge Position",
+                description = "Место бейджа в карточке профиля.",
+                kind = "dropdown",
+                default = "Top Right",
+                group = "Player",
+                options = { "Top Left", "Top Right", "Bottom Left", "Bottom Right" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "player_extra_18_player_card_border",
+                title = "Player Card Border",
+                description = "Стиль границы демонстрационной карточки.",
+                kind = "dropdown",
+                default = "Subtle",
+                group = "Player",
+                options = { "None", "Subtle", "Strong" },
+                min = 0,
+                max = 100,
+            },
         },
     },
-    -- World: decorative controls only
+
     {
         id = "world",
         title = "WORLD",
@@ -2019,9 +2944,207 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "world_extra_01_world_panel_preview",
+                title = "World Panel Preview",
+                description = "Отображение только локального макета панели мира.",
+                kind = "toggle",
+                default = true,
+                group = "World",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_02_environment_card_style",
+                title = "Environment Card Style",
+                description = "Стиль карточек с настройками окружения.",
+                kind = "dropdown",
+                default = "Layered",
+                group = "World",
+                options = { "Layered", "Flat", "Outline" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_03_weather_label_preview",
+                title = "Weather Label Preview",
+                description = "Декоративная метка погоды без изменения мира.",
+                kind = "toggle",
+                default = false,
+                group = "World",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_04_time_display_format",
+                title = "Time Display Format",
+                description = "Формат надписи времени в предпросмотре.",
+                kind = "dropdown",
+                default = "24 Hour",
+                group = "World",
+                options = { "24 Hour", "12 Hour", "Minimal" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_05_lighting_label_scale",
+                title = "Lighting Label Scale",
+                description = "Размер условной подписи освещения.",
+                kind = "slider",
+                default = 100,
+                group = "World",
+                options = {},
+                min = 70,
+                max = 140,
+            },
+            {
+                id = "world_extra_06_skybox_card_opacity",
+                title = "Skybox Card Opacity",
+                description = "Прозрачность демонстрационной карточки неба.",
+                kind = "slider",
+                default = 82,
+                group = "World",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_07_world_color_palette",
+                title = "World Color Palette",
+                description = "Палитра для макета настроек мира.",
+                kind = "dropdown",
+                default = "Ocean",
+                group = "World",
+                options = { "Ocean", "Dusk", "Mono" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_08_atmosphere_panel",
+                title = "Atmosphere Panel",
+                description = "Включает визуальный раздел атмосферы в макете.",
+                kind = "toggle",
+                default = true,
+                group = "World",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_09_world_preview_badge",
+                title = "World Preview Badge",
+                description = "Показывает бейдж режима предпросмотра.",
+                kind = "toggle",
+                default = true,
+                group = "World",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_10_environment_grid",
+                title = "Environment Grid",
+                description = "Переключатель сетки карточек окружения.",
+                kind = "toggle",
+                default = false,
+                group = "World",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_11_environment_grid_gap",
+                title = "Environment Grid Gap",
+                description = "Расстояние между карточками сетки.",
+                kind = "slider",
+                default = 10,
+                group = "World",
+                options = {},
+                min = 2,
+                max = 20,
+            },
+            {
+                id = "world_extra_12_world_profile_card",
+                title = "World Profile Card",
+                description = "Вариант карточки профиля мира.",
+                kind = "dropdown",
+                default = "Soft",
+                group = "World",
+                options = { "Soft", "Crisp", "Glass" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_13_world_settings_summary",
+                title = "World Settings Summary",
+                description = "Демо-действие показа сводки UI-настроек.",
+                kind = "action",
+                default = false,
+                group = "World",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_14_world_panel_density",
+                title = "World Panel Density",
+                description = "Плотность карточек в разделе окружения.",
+                kind = "dropdown",
+                default = "Comfortable",
+                group = "World",
+                options = { "Compact", "Comfortable", "Spacious" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_15_world_label_opacity",
+                title = "World Label Opacity",
+                description = "Прозрачность подписей в макетном разделе мира.",
+                kind = "slider",
+                default = 80,
+                group = "World",
+                options = {},
+                min = 10,
+                max = 100,
+            },
+            {
+                id = "world_extra_16_lighting_card_density",
+                title = "Lighting Card Density",
+                description = "Плотность карточек настроек освещения.",
+                kind = "dropdown",
+                default = "Normal",
+                group = "World",
+                options = { "Compact", "Normal", "Spacious" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_17_sky_preview_style",
+                title = "Sky Preview Style",
+                description = "Стиль карточки неба без изменения окружения.",
+                kind = "dropdown",
+                default = "Horizon",
+                group = "World",
+                options = { "Horizon", "Gradient", "Minimal" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "world_extra_18_environment_badge_position",
+                title = "Environment Badge Position",
+                description = "Позиция бейджа на карточке окружения.",
+                kind = "dropdown",
+                default = "Top Right",
+                group = "World",
+                options = { "Top Left", "Top Right", "Bottom Right" },
+                min = 0,
+                max = 100,
+            },
         },
     },
-    -- Miscellaneous: decorative controls only
+
     {
         id = "misc",
         title = "MISC",
@@ -2270,9 +3393,207 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "misc_extra_01_watermark_scale",
+                title = "Watermark Scale",
+                description = "Размер локального водяного знака.",
+                kind = "slider",
+                default = 100,
+                group = "Miscellaneous",
+                options = {},
+                min = 70,
+                max = 150,
+            },
+            {
+                id = "misc_extra_02_watermark_opacity",
+                title = "Watermark Opacity",
+                description = "Прозрачность водяного знака в макете.",
+                kind = "slider",
+                default = 88,
+                group = "Miscellaneous",
+                options = {},
+                min = 15,
+                max = 100,
+            },
+            {
+                id = "misc_extra_03_toast_position",
+                title = "Toast Position",
+                description = "Позиция демонстрационных уведомлений.",
+                kind = "dropdown",
+                default = "Top Right",
+                group = "Miscellaneous",
+                options = { "Top Left", "Top Right", "Bottom Left", "Bottom Right" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_04_toast_animation",
+                title = "Toast Animation",
+                description = "Стиль анимации уведомления интерфейса.",
+                kind = "dropdown",
+                default = "Slide",
+                group = "Miscellaneous",
+                options = { "Fade", "Slide", "Scale" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_05_keybind_panel_preview",
+                title = "Keybind Panel Preview",
+                description = "Включает декоративный список горячих клавиш.",
+                kind = "toggle",
+                default = false,
+                group = "Miscellaneous",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_06_keybind_panel_width",
+                title = "Keybind Panel Width",
+                description = "Ширина локального списка клавиш.",
+                kind = "slider",
+                default = 220,
+                group = "Miscellaneous",
+                options = {},
+                min = 140,
+                max = 320,
+            },
+            {
+                id = "misc_extra_07_notification_sound_preview",
+                title = "Notification Sound Preview",
+                description = "Только переключатель состояния без воспроизведения звука.",
+                kind = "toggle",
+                default = false,
+                group = "Miscellaneous",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_08_accent_animation",
+                title = "Accent Animation",
+                description = "Включает состояние анимации акцента UI.",
+                kind = "toggle",
+                default = true,
+                group = "Miscellaneous",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_09_accent_animation_speed",
+                title = "Accent Animation Speed",
+                description = "Скорость условной анимации темы.",
+                kind = "slider",
+                default = 50,
+                group = "Miscellaneous",
+                options = {},
+                min = 10,
+                max = 100,
+            },
+            {
+                id = "misc_extra_10_footer_style",
+                title = "Footer Style",
+                description = "Оформление нижней строки окна.",
+                kind = "dropdown",
+                default = "Subtle",
+                group = "Miscellaneous",
+                options = { "Subtle", "Compact", "Detailed" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_11_touch_feedback_preview",
+                title = "Touch Feedback Preview",
+                description = "Показывает состояние сенсорной обратной связи.",
+                kind = "toggle",
+                default = true,
+                group = "Miscellaneous",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_12_touch_target_size",
+                title = "Touch Target Size",
+                description = "Целевой размер сенсорных кнопок в макете.",
+                kind = "slider",
+                default = 44,
+                group = "Miscellaneous",
+                options = {},
+                min = 32,
+                max = 64,
+            },
+            {
+                id = "misc_extra_13_toast_queue_preview",
+                title = "Toast Queue Preview",
+                description = "Демо-действие для очереди уведомлений.",
+                kind = "action",
+                default = false,
+                group = "Miscellaneous",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_14_misc_panel_density",
+                title = "Misc Panel Density",
+                description = "Плотность элементов вспомогательного раздела.",
+                kind = "dropdown",
+                default = "Comfortable",
+                group = "Miscellaneous",
+                options = { "Compact", "Comfortable", "Spacious" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_15_toast_duration_preview",
+                title = "Toast Duration Preview",
+                description = "Настраиваемая длительность-пример уведомления.",
+                kind = "slider",
+                default = 2.4,
+                group = "Miscellaneous",
+                options = {},
+                min = 0.5,
+                max = 6.0,
+            },
+            {
+                id = "misc_extra_16_watermark_position",
+                title = "Watermark Position",
+                description = "Положение водяного знака в макете.",
+                kind = "dropdown",
+                default = "Top Left",
+                group = "Miscellaneous",
+                options = { "Top Left", "Top Right", "Bottom Left", "Bottom Right" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "misc_extra_17_keybind_row_height",
+                title = "Keybind Row Height",
+                description = "Высота строки списка клавиш в предпросмотре.",
+                kind = "slider",
+                default = 28,
+                group = "Miscellaneous",
+                options = {},
+                min = 20,
+                max = 44,
+            },
+            {
+                id = "misc_extra_18_ui_feedback_style",
+                title = "UI Feedback Style",
+                description = "Оформление обратной связи на нажатия.",
+                kind = "dropdown",
+                default = "Soft",
+                group = "Miscellaneous",
+                options = { "Soft", "Sharp", "Minimal" },
+                min = 0,
+                max = 100,
+            },
         },
     },
-    -- Config: decorative controls only
+
     {
         id = "config",
         title = "CONFIG",
@@ -2477,9 +3798,207 @@ local CATALOG = {
                 min = 1,
                 max = 180,
             },
+            {
+                id = "config_extra_01_config_card_style",
+                title = "Config Card Style",
+                description = "Оформление карточек профилей настроек.",
+                kind = "dropdown",
+                default = "Outlined",
+                group = "Config",
+                options = { "Outlined", "Flat", "Glass" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_02_config_list_density",
+                title = "Config List Density",
+                description = "Плотность списка локальных пресетов.",
+                kind = "dropdown",
+                default = "Comfortable",
+                group = "Config",
+                options = { "Compact", "Comfortable", "Spacious" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_03_autosave_badge_preview",
+                title = "Autosave Badge Preview",
+                description = "Декоративный бейдж состояния автосохранения.",
+                kind = "toggle",
+                default = true,
+                group = "Config",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_04_autosave_interval_label",
+                title = "Autosave Interval Label",
+                description = "Макет значения интервала без сохранения на диск.",
+                kind = "slider",
+                default = 30,
+                group = "Config",
+                options = {},
+                min = 5,
+                max = 120,
+            },
+            {
+                id = "config_extra_05_profile_description_preview",
+                title = "Profile Description Preview",
+                description = "Включает описания в карточках локальных профилей.",
+                kind = "toggle",
+                default = true,
+                group = "Config",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_06_profile_icon_style",
+                title = "Profile Icon Style",
+                description = "Выбор иконок для карточек профиля.",
+                kind = "dropdown",
+                default = "Line",
+                group = "Config",
+                options = { "Line", "Solid", "Minimal" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_07_import_panel_preview",
+                title = "Import Panel Preview",
+                description = "Показывает состояние панели импорта без чтения файлов.",
+                kind = "toggle",
+                default = false,
+                group = "Config",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_08_export_panel_preview",
+                title = "Export Panel Preview",
+                description = "Показывает состояние панели экспорта без доступа к буферу.",
+                kind = "toggle",
+                default = false,
+                group = "Config",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_09_config_slot_count",
+                title = "Config Slot Count",
+                description = "Количество отображаемых слотов-примеров.",
+                kind = "slider",
+                default = 6,
+                group = "Config",
+                options = {},
+                min = 1,
+                max = 12,
+            },
+            {
+                id = "config_extra_10_config_timestamp_format",
+                title = "Config Timestamp Format",
+                description = "Формат даты в демонстрационной строке профиля.",
+                kind = "dropdown",
+                default = "ISO",
+                group = "Config",
+                options = { "ISO", "Short", "Relative" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_11_config_confirmation_style",
+                title = "Config Confirmation Style",
+                description = "Стиль диалогов подтверждения макета.",
+                kind = "dropdown",
+                default = "Modal",
+                group = "Config",
+                options = { "Modal", "Inline", "Toast" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_12_config_status_marker",
+                title = "Config Status Marker",
+                description = "Показывает локальную метку активного профиля.",
+                kind = "toggle",
+                default = true,
+                group = "Config",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_13_config_profile_preview",
+                title = "Config Profile Preview",
+                description = "Демо-действие просмотра профиля.",
+                kind = "action",
+                default = false,
+                group = "Config",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_14_config_section_spacing",
+                title = "Config Section Spacing",
+                description = "Отступы между карточками конфигурации.",
+                kind = "slider",
+                default = 12,
+                group = "Config",
+                options = {},
+                min = 4,
+                max = 24,
+            },
+            {
+                id = "config_extra_15_config_slot_style",
+                title = "Config Slot Style",
+                description = "Вариант оформления слотов конфигурации.",
+                kind = "dropdown",
+                default = "Tiles",
+                group = "Config",
+                options = { "Tiles", "Rows", "Compact" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_16_config_badge_opacity",
+                title = "Config Badge Opacity",
+                description = "Прозрачность бейджа активного пресета.",
+                kind = "slider",
+                default = 86,
+                group = "Config",
+                options = {},
+                min = 10,
+                max = 100,
+            },
+            {
+                id = "config_extra_17_config_preview_density",
+                title = "Config Preview Density",
+                description = "Плотность списка параметров предпросмотра.",
+                kind = "dropdown",
+                default = "Normal",
+                group = "Config",
+                options = { "Compact", "Normal", "Detailed" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "config_extra_18_profile_detail_level",
+                title = "Profile Detail Level",
+                description = "Объём описаний в карточках локальных профилей.",
+                kind = "dropdown",
+                default = "Standard",
+                group = "Config",
+                options = { "Brief", "Standard", "Extended" },
+                min = 0,
+                max = 100,
+            },
         },
     },
-    -- About: decorative controls only
+
     {
         id = "about",
         title = "ABOUT",
@@ -2618,10 +4137,208 @@ local CATALOG = {
                 min = 0,
                 max = 100,
             },
+            {
+                id = "about_extra_01_build_label_style",
+                title = "Build Label Style",
+                description = "Оформление версии в верхней панели.",
+                kind = "dropdown",
+                default = "Badge",
+                group = "About",
+                options = { "Badge", "Plain", "Compact" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_02_about_card_layout",
+                title = "About Card Layout",
+                description = "Компоновка карточек информации о проекте.",
+                kind = "dropdown",
+                default = "Two Column",
+                group = "About",
+                options = { "One Column", "Two Column", "List" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_03_feature_count_preview",
+                title = "Feature Count Preview",
+                description = "Показывает демонстрационный счётчик компонентов.",
+                kind = "toggle",
+                default = true,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_04_runtime_status_preview",
+                title = "Runtime Status Preview",
+                description = "Состояние индикатора запуска UI-макета.",
+                kind = "toggle",
+                default = true,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_05_accessibility_contrast",
+                title = "Accessibility Contrast",
+                description = "Вариант контрастности элементов интерфейса.",
+                kind = "dropdown",
+                default = "Standard",
+                group = "About",
+                options = { "Standard", "High", "Soft" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_06_large_touch_controls",
+                title = "Large Touch Controls",
+                description = "Включает состояние увеличенных сенсорных контролов.",
+                kind = "toggle",
+                default = false,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_07_large_touch_scale",
+                title = "Large Touch Scale",
+                description = "Размер условного увеличения контролов.",
+                kind = "slider",
+                default = 110,
+                group = "About",
+                options = {},
+                min = 100,
+                max = 140,
+            },
+            {
+                id = "about_extra_08_reduced_motion_preview",
+                title = "Reduced Motion Preview",
+                description = "Переключатель режима уменьшенного движения UI.",
+                kind = "toggle",
+                default = false,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_09_diagnostics_detail",
+                title = "Diagnostics Detail",
+                description = "Уровень подробности локальных сведений.",
+                kind = "dropdown",
+                default = "Standard",
+                group = "About",
+                options = { "Basic", "Standard", "Detailed" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_10_panel_border_preview",
+                title = "Panel Border Preview",
+                description = "Показывает состояние границ панелей.",
+                kind = "toggle",
+                default = true,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_11_panel_shadow_preview",
+                title = "Panel Shadow Preview",
+                description = "Переключатель состояния тени в образце.",
+                kind = "toggle",
+                default = false,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_12_about_spacing_scale",
+                title = "About Spacing Scale",
+                description = "Масштаб отступов информационного раздела.",
+                kind = "slider",
+                default = 100,
+                group = "About",
+                options = {},
+                min = 75,
+                max = 130,
+            },
+            {
+                id = "about_extra_13_prototype_status_sample",
+                title = "Prototype Status Sample",
+                description = "Демо-действие с уведомлением о режиме макета.",
+                kind = "action",
+                default = false,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_14_about_layout_refresh",
+                title = "About Layout Refresh",
+                description = "Демо-действие для проверки отзывчивости панели.",
+                kind = "action",
+                default = false,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_15_accessibility_hint_preview",
+                title = "Accessibility Hint Preview",
+                description = "Показывает состояние подсказки доступности.",
+                kind = "toggle",
+                default = true,
+                group = "About",
+                options = {},
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_16_diagnostics_badge_style",
+                title = "Diagnostics Badge Style",
+                description = "Оформление бейджа диагностики интерфейса.",
+                kind = "dropdown",
+                default = "Outlined",
+                group = "About",
+                options = { "Outlined", "Filled", "Minimal" },
+                min = 0,
+                max = 100,
+            },
+            {
+                id = "about_extra_17_layout_scale_preview",
+                title = "Layout Scale Preview",
+                description = "Масштаб UI-макета в условных процентах.",
+                kind = "slider",
+                default = 100,
+                group = "About",
+                options = {},
+                min = 80,
+                max = 125,
+            },
+            {
+                id = "about_extra_18_information_card_spacing",
+                title = "Information Card Spacing",
+                description = "Расстояние между информационными карточками.",
+                kind = "slider",
+                default = 12,
+                group = "About",
+                options = {},
+                min = 4,
+                max = 28,
+            },
         },
     },
 }
---// Index catalog for quick UI lookups ----------------------------------------
+
 for _, tab in ipairs(CATALOG) do
     tabById[tab.id] = tab
     for _, item in ipairs(tab.features) do
@@ -2632,7 +4349,6 @@ for _, tab in ipairs(CATALOG) do
     end
 end
 
---// ScreenGui -----------------------------------------------------------------
 local existingGui = PlayerGui:FindFirstChild("AquamarineHvHPrototype")
 if existingGui then
     existingGui:Destroy()
@@ -2647,7 +4363,6 @@ local ScreenGui = make("ScreenGui", {
     Enabled = true,
 }, PlayerGui)
 
--- A soft overlay keeps the panel distinct without obscuring the whole game.
 local backdrop = make("TextButton", {
     Name = "Backdrop",
     AutoButtonColor = false,
@@ -2660,7 +4375,6 @@ local backdrop = make("TextButton", {
     ZIndex = 1,
 }, ScreenGui)
 
--- Main floating window. Its pixel size is updated for both portrait and landscape.
 local window = make("Frame", {
     Name = "MainWindow",
     AnchorPoint = Vector2.new(0.5, 0.5),
@@ -2683,7 +4397,6 @@ local windowGradient = make("UIGradient", {
     Rotation = 90,
 }, window)
 
--- Topbar ----------------------------------------------------------------------
 local topbar = make("Frame", {
     Name = "Topbar",
     BackgroundColor3 = COLORS.Header,
@@ -2771,7 +4484,6 @@ local headerLine = make("Frame", {
     ZIndex = 4,
 }, topbar)
 
--- Navigation ------------------------------------------------------------------
 local nav = make("ScrollingFrame", {
     Name = "TabNavigation",
     BackgroundColor3 = COLORS.Window,
@@ -2791,7 +4503,6 @@ local nav = make("ScrollingFrame", {
 addPadding(nav, 10, 5, 10, 5)
 local navLayout = addList(nav, Enum.FillDirection.Horizontal, 6, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
 
--- Content body ----------------------------------------------------------------
 local content = make("Frame", {
     Name = "ContentBody",
     BackgroundTransparency = 1,
@@ -2899,7 +4610,6 @@ local footerCount = makeLabel(footer, "0 ITEMS", 8, UDim2.new(1, -94, 0, 0), FON
 footerCount.Size = UDim2.new(0, 78, 1, 0)
 footerCount.ZIndex = 5
 
--- Toast area ------------------------------------------------------------------
 toastHost = make("Frame", {
     Name = "ToastHost",
     BackgroundTransparency = 1,
@@ -2911,7 +4621,6 @@ toastHost = make("Frame", {
 }, ScreenGui)
 addList(toastHost, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Right, Enum.VerticalAlignment.Bottom)
 
--- Floating reopen button is kept separate from the main window. ----------------
 local reopenButton = make("TextButton", {
     Name = "ReopenAquamarine",
     AutoButtonColor = false,
@@ -2937,7 +4646,6 @@ reopenHint.Size = UDim2.fromOffset(90, 18)
 reopenHint.Visible = false
 reopenHint.ZIndex = 39
 
---// Tab buttons ---------------------------------------------------------------
 local function setTabButtonAppearance(button, active)
     if active then
         button.BackgroundColor3 = COLORS.AccentSoft
@@ -2968,7 +4676,6 @@ for index, tab in ipairs(CATALOG) do
     setTabButtonAppearance(button, tab.id == state.activeTab)
 end
 
---// Control components ---------------------------------------------------------
 local function makeToggleControl(parent, item)
     local button = make("TextButton", {
         Name = "ToggleControl",
@@ -3217,7 +4924,6 @@ local function makeActionControl(parent, item)
     return button
 end
 
---// Feature cards -------------------------------------------------------------
 local function createFeatureRow(item, order)
     local rowHeight = state.compactRows and SETTINGS.CompactRowHeight or SETTINGS.RowHeight
     local row = make("Frame", {
@@ -3362,7 +5068,6 @@ searchBox:GetPropertyChangedSignal("Text"):Connect(function()
     renderActiveTab()
 end)
 
---// Window controls -----------------------------------------------------------
 local function setMinimized(minimized)
     state.minimized = minimized
     if minimized then
@@ -3400,10 +5105,9 @@ reopenButton.Activated:Connect(function()
 end)
 
 backdrop.Activated:Connect(function()
-    -- The backdrop is hidden by default; retained for future UI-only styling.
+
 end)
 
---// Touch and mouse dragging --------------------------------------------------
 topbar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         draggingWindow = true
@@ -3458,7 +5162,6 @@ UserInputService.InputEnded:Connect(function(input)
     end
 end)
 
---// Responsive layout ---------------------------------------------------------
 updateResponsiveSize = function()
     if not Camera then
         Camera = workspace.CurrentCamera
@@ -3516,7 +5219,6 @@ workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
     end
 end)
 
---// Search focus visual feedback ---------------------------------------------
 searchBox.Focused:Connect(function()
     local stroke = searchBox:FindFirstChildOfClass("UIStroke")
     if stroke then
@@ -3531,7 +5233,6 @@ searchBox.FocusLost:Connect(function()
     end
 end)
 
---// Keyboard / device niceties -----------------------------------------------
 UserInputService.InputBegan:Connect(function(input, processed)
     if processed then
         return
@@ -3553,7 +5254,6 @@ UserInputService.InputBegan:Connect(function(input, processed)
     end
 end)
 
---// Accessibility and convenience --------------------------------------------
 local function setCompactRows(enabled)
     state.compactRows = enabled == true
     renderActiveTab()
@@ -3567,22 +5267,18 @@ local function showSafetyToast()
     showToast("Все функции декоративные и не влияют на игру", "success")
 end
 
---// Final initialization -------------------------------------------------------
 renderActiveTab()
 updateResponsiveSize()
 window.Visible = not SETTINGS.StartMinimized
 reopenButton.Visible = SETTINGS.StartMinimized
 reopenHint.Visible = SETTINGS.StartMinimized
 
--- A tiny delayed welcome notice helps confirm that the LocalScript ran.
 task.delay(0.45, function()
     if ScreenGui and ScreenGui.Parent then
         showSafetyToast()
     end
 end)
 
---// Optional UI-only hooks ----------------------------------------------------
--- These helpers are intentionally local and do not connect to game mechanics.
 local function getActiveTabId()
     return state.activeTab
 end
@@ -3620,463 +5316,3 @@ local function getUiPrototypeInfo()
         activeTab = getActiveTabId(),
     }
 end
-
--- Prototype script end. Any future implementation should preserve this boundary:
--- UI controls are not wired to character, camera, workspace, remotes, or services
--- that would alter gameplay. This file ends here by design.
---[[
-================================================================================
-MAINTENANCE NOTES / UI STYLE GUIDE
-================================================================================
-
-THEME TOKENS
-------------
-Background: almost-black navy used behind the main panel.
-Window: main panel background.
-Header: topbar and footer surface.
-Panel: generic content surface.
-Card: default state for a feature card.
-CardHover: subtle surface highlight for pointer hover.
-CardPressed: touch or mouse press feedback.
-Border: low-contrast edge for separators and cards.
-Accent: aquamarine mint, reserved for active controls and focus.
-AccentDeep: deeper mint used for fills and active rails.
-AccentSoft: low-opacity-looking dark mint surface used behind active badges.
-Text: main light text.
-TextSoft: secondary text for descriptions.
-TextMuted: hint labels and metadata.
-Positive: visual-only success accent.
-Warning: visual-only warning accent.
-Negative: close and error accent.
-
-LAYOUT SIZING
--------------
-The topbar stays the same height across device sizes for predictable touch use.
-The category navigation is horizontally scrollable, not wrapped into tiny buttons.
-The section title and search box use a breakpoint at 430 horizontal pixels.
-The footer is hidden on short landscape viewports to make room for settings.
-The content list scrolls vertically and uses a minimum row height for touch targets.
-The window uses viewport-relative calculations but sets pixel offsets for exact fit.
-
-CONTROL TYPES
--------------
-Toggle:
-    A rounded switch with ON/OFF label. Its state is stored by item.id.
-Slider:
-    A small track plus value label and two accessible step buttons.
-    Touch or mouse input can move the fill by touching the track.
-Dropdown:
-    A compact button that cycles through its configured list.
-Action:
-    A clear demo button. It triggers a toast, not a gameplay action.
-
-CATALOG CONVENTIONS
--------------------
-Each tab has a stable id used by the navigation system.
-Each feature id is unique across the whole catalog.
-Every item has a title, description, kind, default, and group.
-Dropdown entries additionally provide options.
-Slider entries additionally provide min and max.
-The catalog is static so the UI does not need external requests.
-
-ADDING A CATEGORY
------------------
-1. Add a category object to CATALOG before ScreenGui creation.
-2. Give it unique id, title, name and subtitle values.
-3. Add a features array containing the desired decorative controls.
-4. Each control should have a unique id and a short plain-language description.
-5. Use kind = toggle, slider, dropdown, or action.
-6. Use default = false for toggles, a number for sliders, and a listed string
-   for dropdowns. Actions may use false as their placeholder default.
-7. Keep the UI-only boundary intact: never wire fake controls to gameplay.
-
-ADDING A TOGGLE
----------------
-A toggle is rendered by makeToggleControl().
-State changes happen in state.values and remain local to this LocalScript.
-The visual switch is refreshed after each Activated event.
-If a toggle affects a UI presentation option such as compact rows, handle that
-case inside the relevant UI branch, not in game logic.
-
-ADDING A SLIDER
----------------
-A slider is rendered by makeSliderControl().
-Its min and max properties define the value range.
-The step size is small for short ranges and larger for long ranges.
-The control is designed for a narrow mobile right column.
-Keep slider labels short so the text remains readable on small screens.
-
-ADDING A DROPDOWN
------------------
-A dropdown is rendered by makeDropdownControl().
-The current value is found in item.options and advances to the next item.
-The small control does not use a pop-up panel, avoiding screen overflow on mobile.
-Options should be short enough to fit a compact button.
-
-ADDING AN ACTION
-----------------
-An action is rendered by makeActionControl().
-Action handlers are intentionally limited to changing UI state or showing toasts.
-A new action should call notifyUiOnly() unless it is an explicit UI reset,
-window-position reset, or another harmless interface-only operation.
-Never add remote invocation, data exfiltration, or character manipulation here.
-
-SEARCH BEHAVIOUR
-----------------
-The active query is stored in state.query.
-Rows match when their title, description, or group contains the query.
-Search is case-insensitive and uses plain substring matching.
-The result counter updates whenever the category or query changes.
-The scroll position resets after a render for predictable navigation.
-
-MOBILE INTERACTION
-------------------
-Use Activated for buttons so mouse, touch, and gamepad activation are supported.
-Use InputBegan / InputChanged for dragging and the slider track.
-The window's drag origin is captured at touch begin to prevent sudden jumps.
-Keep controls sufficiently separated so taps are less likely to hit the wrong row.
-Do not rely on hover feedback as the only indication that a control was activated.
-
-ANIMATION GUIDELINES
---------------------
-Use short easing transitions for switch knobs, card highlights, and toast feedback.
-Respect state.reducedMotion for users who prefer immediate UI changes.
-Avoid long looping effects that consume mobile battery or obscure content.
-The prototype intentionally does not use expensive blur effects or 3D render loops.
-
-ROBLOX STUDIO NOTES
--------------------
-Run this in a LocalScript because PlayerGui is local to a player.
-For an in-experience menu, use StarterPlayerScripts or a suitable ScreenGui script.
-Do not place it in a server Script; server scripts do not have LocalPlayer.
-For a production game, recreate the visual design in your own experience and
-connect only legitimate, intended settings supported by your game design.
-This prototype does not attempt to bypass platform protections or game rules.
-
-TEST CHECKLIST
---------------
-[ ] Play in Studio with a mouse.
-[ ] Test portrait viewport at 320 x 700.
-[ ] Test portrait viewport at 390 x 844.
-[ ] Test landscape viewport at 800 x 360.
-[ ] Test a desktop-like viewport at 1366 x 768.
-[ ] Tap each category and verify the active state moves.
-[ ] Type in the search box and verify that rows filter.
-[ ] Toggle a decorative option and verify only the switch changes.
-[ ] Drag a slider and verify only the displayed value changes.
-[ ] Press a dropdown and cycle through its options.
-[ ] Press an action and verify the toast appears.
-[ ] Minimize and restore the window.
-[ ] Close the window and reopen it with the A button.
-[ ] Confirm that no gameplay properties are modified.
-
-KNOWN LIMITATIONS
------------------
-This is a visual prototype, not a full production design system.
-The dropdown intentionally cycles options rather than opening a popup list.
-The config page demonstrates UI affordances; it does not save external files.
-The feature descriptions are decorative and should not be interpreted as claims
-that the corresponding gameplay behaviour has been implemented.
-The UI does not attempt cross-session persistence.
-The exact visual appearance may differ slightly across Roblox device emulators.
-
-MAINTENANCE BOUNDARY
---------------------
-The implementation should remain a local UI mockup. The state table is a view
-model, not an authoritative source of gameplay data. The ScreenGui is parented
-to PlayerGui and uses ordinary Roblox APIs. No external libraries are required.
-No network calls, remote events, filesystem access, executor APIs, hidden APIs,
-or third-party dependencies are part of the design.
-
-END OF MAINTENANCE GUIDE
-================================================================================
-]]
-
---// Catalog reference index (title => local id / control type) ----------------
--- [COMBAT] Боевой раздел · визуальные заглушки
--- combat_1_aim_assist: Aim Assist [toggle]
--- combat_2_silent_aim: Silent Aim [toggle]
--- combat_3_rage_mode: Rage Mode [slider]
--- combat_4_target_priority: Target Priority [dropdown]
--- combat_5_field_of_view: Field of View [toggle]
--- combat_6_hit_chance: Hit Chance [action]
--- combat_7_minimum_damage: Minimum Damage [toggle]
--- combat_8_quick_stop: Quick Stop [slider]
--- combat_9_auto_scope: Auto Scope [dropdown]
--- combat_10_auto_fire: Auto Fire [toggle]
--- combat_11_target_lock: Target Lock [toggle]
--- combat_12_multipoint_scale: Multipoint Scale [toggle]
--- combat_13_body_aim: Body Aim [slider]
--- combat_14_prefer_head: Prefer Head [dropdown]
--- combat_15_prefer_body: Prefer Body [toggle]
--- combat_16_damage_override: Damage Override [action]
--- combat_17_safe_point: Safe Point [toggle]
--- combat_18_resolver_preview: Resolver Preview [slider]
--- combat_19_accuracy_mode: Accuracy Mode [dropdown]
--- combat_20_spread_preview: Spread Preview [toggle]
--- combat_21_recoil_preview: Recoil Preview [toggle]
--- combat_22_weapon_profiles: Weapon Profiles [toggle]
--- combat_23_target_indicator: Target Indicator [slider]
--- combat_24_shot_log_preview: Shot Log Preview [dropdown]
--- combat_25_aim_key: Aim Key [toggle]
--- combat_26_auto_peek: Auto Peek [action]
--- combat_27_peek_assist: Peek Assist [toggle]
--- combat_28_damage_marker: Damage Marker [slider]
--- combat_29_prefer_close_range: Prefer Close Range [dropdown]
--- combat_30_combat_preset: Combat Preset [toggle]
--- [ANTI-AIM] Anti-aim · интерфейсный прототип
--- antiaim_1_anti_aim_master: Anti-Aim Master [toggle]
--- antiaim_2_yaw_mode: Yaw Mode [toggle]
--- antiaim_3_yaw_offset: Yaw Offset [slider]
--- antiaim_4_pitch_mode: Pitch Mode [dropdown]
--- antiaim_5_pitch_amount: Pitch Amount [toggle]
--- antiaim_6_desync_preview: Desync Preview [action]
--- antiaim_7_jitter_mode: Jitter Mode [toggle]
--- antiaim_8_jitter_range: Jitter Range [slider]
--- antiaim_9_spin_speed: Spin Speed [dropdown]
--- antiaim_10_fake_flick: Fake Flick [toggle]
--- antiaim_11_lower_body_yaw: Lower Body Yaw [toggle]
--- antiaim_12_freestanding: Freestanding [toggle]
--- antiaim_13_edge_preview: Edge Preview [slider]
--- antiaim_14_manual_left: Manual Left [dropdown]
--- antiaim_15_manual_right: Manual Right [toggle]
--- antiaim_16_manual_back: Manual Back [action]
--- antiaim_17_inverter: Inverter [toggle]
--- antiaim_18_anti_bruteforce: Anti-Bruteforce [slider]
--- antiaim_19_fake_lag_preview: Fake Lag Preview [dropdown]
--- antiaim_20_condition_standing: Condition: Standing [toggle]
--- antiaim_21_condition_moving: Condition: Moving [toggle]
--- antiaim_22_condition_airborne: Condition: Airborne [toggle]
--- [VISUALS] Визуальные настройки · без ESP-логики
--- visuals_1_visuals_master: Visuals Master [toggle]
--- visuals_2_box_overlay: Box Overlay [toggle]
--- visuals_3_box_style: Box Style [slider]
--- visuals_4_name_tags: Name Tags [dropdown]
--- visuals_5_health_bar: Health Bar [toggle]
--- visuals_6_health_bar_style: Health Bar Style [action]
--- visuals_7_skeleton_preview: Skeleton Preview [toggle]
--- visuals_8_snap_lines: Snap Lines [slider]
--- visuals_9_distance_labels: Distance Labels [dropdown]
--- visuals_10_weapon_labels: Weapon Labels [toggle]
--- visuals_11_flags: Flags [toggle]
--- visuals_12_chams_preview: Chams Preview [toggle]
--- visuals_13_chams_style: Chams Style [slider]
--- visuals_14_glow_preview: Glow Preview [dropdown]
--- visuals_15_glow_strength: Glow Strength [toggle]
--- visuals_16_offscreen_arrows: Offscreen Arrows [action]
--- visuals_17_arrow_size: Arrow Size [toggle]
--- visuals_18_arrow_radius: Arrow Radius [slider]
--- visuals_19_radar_preview: Radar Preview [dropdown]
--- visuals_20_radar_size: Radar Size [toggle]
--- visuals_21_radar_zoom: Radar Zoom [toggle]
--- visuals_22_world_tint: World Tint [toggle]
--- visuals_23_world_brightness: World Brightness [slider]
--- visuals_24_skybox_preview: Skybox Preview [dropdown]
--- visuals_25_fog_preview: Fog Preview [toggle]
--- visuals_26_third_person_preview: Third Person Preview [action]
--- visuals_27_viewmodel_offset: Viewmodel Offset [toggle]
--- visuals_28_viewmodel_fov: Viewmodel FOV [slider]
--- visuals_29_hitmarker_preview: Hitmarker Preview [dropdown]
--- visuals_30_damage_numbers: Damage Numbers [toggle]
--- visuals_31_crosshair_style: Crosshair Style [toggle]
--- visuals_32_crosshair_size: Crosshair Size [toggle]
--- [MOVEMENT] Перемещение · все параметры неактивны
--- movement_1_movement_master: Movement Master [toggle]
--- movement_2_bunny_hop_preview: Bunny Hop Preview [toggle]
--- movement_3_auto_strafe_preview: Auto Strafe Preview [slider]
--- movement_4_air_strafe_mode: Air Strafe Mode [dropdown]
--- movement_5_speed_display: Speed Display [toggle]
--- movement_6_speed_value: Speed Value [action]
--- movement_7_jump_height: Jump Height [toggle]
--- movement_8_long_jump_preview: Long Jump Preview [slider]
--- movement_9_edge_bug_preview: Edge Bug Preview [dropdown]
--- movement_10_slow_walk: Slow Walk [toggle]
--- movement_11_slow_walk_amount: Slow Walk Amount [toggle]
--- movement_12_crouch_assist: Crouch Assist [toggle]
--- movement_13_crouch_mode: Crouch Mode [slider]
--- movement_14_slide_preview: Slide Preview [dropdown]
--- movement_15_ladder_assist: Ladder Assist [toggle]
--- movement_16_water_movement: Water Movement [action]
--- movement_17_no_clip_preview: No Clip Preview [toggle]
--- movement_18_fly_preview: Fly Preview [slider]
--- movement_19_teleport_preset: Teleport Preset [dropdown]
--- movement_20_movement_preset: Movement Preset [toggle]
--- [PLAYER] Параметры игрока · UI-only
--- player_1_player_panel: Player Panel [toggle]
--- player_2_local_status: Local Status [toggle]
--- player_3_profile_name: Profile Name [slider]
--- player_4_profile_color: Profile Color [dropdown]
--- player_5_fake_rank: Fake Rank [toggle]
--- player_6_fake_level: Fake Level [action]
--- player_7_stat_preview: Stat Preview [toggle]
--- player_8_health_display: Health Display [slider]
--- player_9_armor_display: Armor Display [dropdown]
--- player_10_stamina_preview: Stamina Preview [toggle]
--- player_11_player_tag: Player Tag [toggle]
--- player_12_custom_tag_text: Custom Tag Text [toggle]
--- player_13_tag_style: Tag Style [slider]
--- player_14_color_accent: Color Accent [dropdown]
--- player_15_hud_compact_mode: HUD Compact Mode [toggle]
--- player_16_hud_scale: HUD Scale [toggle]
--- player_17_hud_opacity: HUD Opacity [toggle]
--- player_18_notification_style: Notification Style [slider]
--- player_19_status_badge: Status Badge [dropdown]
--- player_20_player_preset: Player Preset [toggle]
--- [WORLD] Окружение · без изменений Workspace
--- world_1_world_panel: World Panel [toggle]
--- world_2_ambient_preview: Ambient Preview [toggle]
--- world_3_clock_time: Clock Time [slider]
--- world_4_time_preset: Time Preset [dropdown]
--- world_5_rain_preview: Rain Preview [toggle]
--- world_6_snow_preview: Snow Preview [action]
--- world_7_particle_density: Particle Density [toggle]
--- world_8_bloom_preview: Bloom Preview [slider]
--- world_9_color_correction: Color Correction [dropdown]
--- world_10_blur_preview: Blur Preview [toggle]
--- world_11_sun_rays_preview: Sun Rays Preview [toggle]
--- world_12_atmosphere_preview: Atmosphere Preview [toggle]
--- world_13_terrain_preview: Terrain Preview [slider]
--- world_14_water_color: Water Color [dropdown]
--- world_15_material_preview: Material Preview [toggle]
--- world_16_world_theme: World Theme [action]
--- world_17_environment_profile: Environment Profile [toggle]
--- world_18_lighting_profile: Lighting Profile [slider]
--- world_19_world_reset_preview: World Reset Preview [dropdown]
--- world_20_world_preset: World Preset [toggle]
--- [MISC] Дополнительные элементы интерфейса
--- misc_1_watermark: Watermark [toggle]
--- misc_2_watermark_style: Watermark Style [dropdown]
--- misc_3_keybind_list: Keybind List [slider]
--- misc_4_keybind_theme: Keybind Theme [dropdown]
--- misc_5_event_log_preview: Event Log Preview [toggle]
--- misc_6_show_debug_labels: Show Debug Labels [action]
--- misc_7_menu_sounds: Menu Sounds [toggle]
--- misc_8_animations: Animations [toggle]
--- misc_9_reduced_motion: Reduced Motion [toggle]
--- misc_10_open_on_spawn: Open On Spawn [toggle]
--- misc_11_confirm_actions: Confirm Actions [toggle]
--- misc_12_toast_duration: Toast Duration [toggle]
--- misc_13_ui_blur_preview: UI Blur Preview [slider]
--- misc_14_panel_shadow: Panel Shadow [toggle]
--- misc_15_rounded_corners: Rounded Corners [toggle]
--- misc_16_compact_rows: Compact Rows [toggle]
--- misc_17_accent_animation: Accent Animation [toggle]
--- misc_18_rainbow_accent: Rainbow Accent [toggle]
--- misc_19_safe_mode_badge: Safe Mode Badge [dropdown]
--- misc_20_reset_ui_state: Reset UI State [action]
--- misc_21_copy_ui_credits: Copy UI Credits [action]
--- misc_22_misc_preset: Misc Preset [toggle]
--- [CONFIG] Пресеты и настройки интерфейса (демо)
--- config_1_active_config: Active Config [toggle]
--- config_2_config_slot: Config Slot [toggle]
--- config_3_load_config: Load Config [action]
--- config_4_save_config: Save Config [action]
--- config_5_create_config: Create Config [action]
--- config_6_rename_config: Rename Config [action]
--- config_7_delete_config: Delete Config [action]
--- config_8_export_preview: Export Preview [action]
--- config_9_import_preview: Import Preview [action]
--- config_10_config_theme: Config Theme [toggle]
--- config_11_config_notes: Config Notes [toggle]
--- config_12_auto_save: Auto Save [toggle]
--- config_13_config_backup: Config Backup [slider]
--- config_14_reset_combat_ui: Reset Combat UI [action]
--- config_15_reset_visual_ui: Reset Visual UI [action]
--- config_16_reset_all_ui: Reset All UI [action]
--- config_17_preset_aquamarine: Preset: Aquamarine [toggle]
--- config_18_preset_midnight: Preset: Midnight [slider]
--- [ABOUT] Информация о визуальном макете
--- about_1_build_channel: Build Channel [toggle]
--- about_2_version_label: Version Label [toggle]
--- about_3_mobile_layout: Mobile Layout [toggle]
--- about_4_touch_input: Touch Input [toggle]
--- about_5_ui_diagnostics: UI Diagnostics [action]
--- about_6_credits: Credits [action]
--- about_7_documentation: Documentation [action]
--- about_8_safety_notice: Safety Notice [slider]
--- about_9_theme_preview: Theme Preview [dropdown]
--- about_10_reset_window_position: Reset Window Position [action]
--- about_11_reopen_button: Reopen Button [toggle]
--- about_12_close_menu: Close Menu [action]
---// Quick customization glossary ---------------------------------------------
--- Change COLORS.Accent to adjust the main aquamarine highlight.
--- Change COLORS.Window to make the panel brighter or darker.
--- Change SETTINGS.HeaderHeight to alter the topbar touch target.
--- Change SETTINGS.NavigationHeight to adjust the category strip.
--- Change SETTINGS.RowHeight to change the height of each feature card.
--- Change SETTINGS.CompactRowHeight to adjust compact mode.
--- Change SETTINGS.ToastTime to control demo notification duration.
--- Change SETTINGS.DefaultTab to choose the first tab.
--- Change SETTINGS.StartMinimized to start with only the reopen button visible.
--- Change APP_VERSION to update the version label.
--- Change APP_SUBTITLE to adjust the topbar subheading.
--- Change UI_ONLY_NOTICE to change the footer status text.
--- Change SETTINGS.SearchPlaceholder to edit the search hint.
--- Change the tab `title` field to update its navigation label.
--- Change the tab `subtitle` field to update the section hint.
--- Change a feature `description` to customize the secondary card text.
--- Change a feature `kind` to select toggle, slider, dropdown, or action.
--- Change slider `min` and `max` to set its numeric display range.
--- Change dropdown `options` to set the values cycled by the control.
--- Change an item's `default` to set its initial UI state.
--- Feature values are stored by stable id in state.values.
--- Unique ids prevent two decorative controls from sharing one state value.
--- The footer item count reflects the filtered rows in the current category.
--- The search field filters one category at a time to keep results predictable.
--- The navigation bar scrolls sideways when all tabs do not fit the viewport.
--- The row style deliberately prioritizes labels and descriptions over decoration.
--- The left accent rail gives the cards a subtle signature without visual clutter.
--- The corner radius is shared across most components for a consistent appearance.
--- The status badge is hidden at narrow widths to preserve usable header space.
--- The search box shrinks at narrow widths to leave space for the section title.
--- The footer is hidden on very short viewports to leave more room for controls.
--- The reopen button is a separate sibling so it remains available after closing.
--- The header drag handler supports both touch and mouse input.
--- The slider track also handles touch and mouse input.
--- The toggle uses Activated for mobile-friendly activation.
--- The action button displays a toast instead of performing game actions.
--- The preset actions are placeholders; they do not save profile files.
--- The reset actions only reset in-memory values in this UI.
--- The current config profile is only displayed in a dropdown.
--- There is no datastore or backend service attached to the prototype.
--- Nothing in this script changes Humanoid properties.
--- Nothing in this script changes Camera properties for gameplay.
--- Nothing in this script adds instances to Workspace.
--- Nothing in this script calls RemoteEvent or RemoteFunction.
--- Nothing in this script reads other players' private data.
--- Nothing in this script uses an executor-specific environment.
--- The LocalScript runs entirely in the client UI layer.
--- Keep this boundary if you extend the design later.
---[[
-CHANGE LOG
-----------
-1.0.0-mobile-prototype
-- Initial aquamarine palette.
-- Responsive centered window.
-- Nine navigable categories.
-- Static local catalog for decorative feature cards.
-- Toggle, slider, dropdown and action controls.
-- Touch and mouse support.
-- Search filtering.
-- Toast notifications.
-- Minimize, close, reopen and recenter UI actions.
-- Local-only settings reset.
-- No gameplay features intentionally implemented.
-
-FUTURE UI-ONLY IDEAS
---------------------
-- Additional color palettes with a controlled list of presets.
-- A separate visual theme preview panel.
-- Optional icon glyphs for navigation tabs.
-- A focus outline for keyboard/gamepad navigation.
-- A dedicated changelog screen with local static text.
-- More localized labels for language selection.
-- Adjustable row density for very small screens.
-- A non-persistent preset preview that changes card labels only.
-- A simple layout guide to explain each decorative control type.
-- An isolated theme editor that only changes COLORS tokens.
-
-This file intentionally ends as a UI concept. Any future work should preserve
-its no-gameplay-effect scope and be tested in a Roblox Studio experience that
-you own or have permission to modify.
-]]
